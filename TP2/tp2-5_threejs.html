@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>TP2 Exercice 5 Three.js</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+<!-- inclusion de la librairie Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+<script src="js/mesObjets.js"></script>
+
+<script>
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight);
+    camera.position.z = 5;
+
+    const scene = new THREE.Scene();
+    const couleur = new THREE.Color(0x303030);
+    scene.background = couleur;
+
+    const group = new THREE.Group();
+
+    const cube1 = cubeRepere(1);
+    cube1.position.set(-2, 0, 0);
+    group.add(cube1);
+
+    const cube2 = cubeRepere(1);
+    cube2.position.set(2, 0, 0);
+    group.add(cube2);
+
+    scene.add(group);
+
+    const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+    source.position.set(2, 2, 2);
+    scene.add(source);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    function animer()
+    {
+        renderer.render(scene, camera);
+        requestAnimationFrame(animer);
+    }
+
+    window.addEventListener('keydown', function(event)
+    {
+        switch(event.key)
+        {
+            case '+':
+                group.position.z -= 1;
+                break;
+            case '-':
+                group.position.z += 1;
+                break;
+            case 'ArrowRight':
+                for (let i = 0; i < group.children.length; i++)
+                {
+                    group.children[i].rotateY(0.1);
+                }
+                break;
+            case 'ArrowLeft':
+                for (let i = 0; i < group.children.length; i++)
+                {
+                    group.children[i].rotateY(-0.1);
+                }
+                break;
+            case 'ArrowDown':
+                group.rotateX(0.1);
+                break;
+            case 'ArrowUp':
+                group.rotateX(-0.1);
+                break;
+        }
+    });
+
+    window.addEventListener('resize', function()
+    {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // lancer la fonction de rendu
+    animer();
+
+</script>
+</body>
+</html>
