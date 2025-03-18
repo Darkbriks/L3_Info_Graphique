@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>TP4 Three.js - Exo 3</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  
+  <body>
+    <!-- inclusion de la librairie Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+
+    <!-- inclusion du contrôleur de type orbite -->
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/mesObjets.js"></script>
+    
+    <script>
+      class Target
+      {
+        static meshs = [];
+        static targets = [];
+        static planes = [];
+
+        constructor(scene)
+        {
+          this.sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16), new THREE.MeshLambertMaterial({color: 0xffff00}));
+          this.sphere.position.x = Math.random() * 4 - 2;
+          this.sphere.position.y = Math.random() * 4 - 2;
+          this.sphere.position.z = Math.random() * 4 - 2;
+          Target.meshs.push(this.sphere);
+          Target.targets.push(this);
+          scene.add(this.sphere);
+
+          this.direction = new THREE.Vector3(Math.random() < 0.5 ? -0.01 : 0.01, Math.random() < 0.5 ? -0.01 : 0.01, Math.random() < 0.5 ? -0.01 : 0.01);
+        }
+
+        static getTargetFromSphere(sphere)
+        {
+          return Target.meshs.find((target) => target === sphere);
+        }
+
+        update()
+        {
+            this.sphere.position.add(this.direction);
+            if (this.sphere.position.z >= 2.0) { this.direction.z = -this.direction.z; }
+
+            const raycaster = new THREE.Raycaster(this.sphere.position, new THREE.Vector3(1 * this.direction.x, 0, 0));
+            const intersects = raycaster.intersectObjects(Target.planes, true);
+            if(intersects.length > 0)
+            {
+              if(intersects[0].distance <= 0.1)
+              {
+                this.direction.x = -this.direction.x;
+              }
+            }
+
+            raycaster.set(this.sphere.position, new THREE.Vector3(0, 1 * this.direction.y, 0));
+            const intersects2 = raycaster.intersectObjects(Target.planes, true);
+            if(intersects2.length > 0)
+            {
+              if(intersects2[0].distance <= 0.1)
+              {
+                this.direction.y = -this.direction.y;
+              }
+            }
+
+            raycaster.set(this.sphere.position, new THREE.Vector3(0, 0, 1 * this.direction.z));
+            const intersects3 = raycaster.intersectObjects(Target.planes, true);
+            if(intersects3.length > 0)
+            {
+              if(intersects3[0].distance <= 0.1)
+              {
+                this.direction.z = -this.direction.z;
+              }
+            }
+        }
+
+        static updateAll()
+        {
+          for (let i = 0; i < Target.targets.length; i++)
+          {
+            Target.targets[i].update();
+          }
+        }
+      }
+
+      // Création de la caméra
+      const camera = new THREE.PerspectiveCamera(60,
+						 window.innerWidth / window.innerHeight,
+						);
+      camera.position.z = 5;
+
+      // création de la scène
+      const scene = new THREE.Scene();
+      const couleur = new THREE.Color(0xFFFFFF);
+      scene.background = couleur;
+
+      planes = createBox();
+      scene.add(planes);
+      Target.planes = planes.children;
+      for (let i = 0; i < 10; i++) { new Target(scene); }
+
+      const lum = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+      lum.position.set( 1, 1, 2 );
+      lum.castShadow = true;
+      scene.add(lum);
+      
+      // création du renderer
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild( renderer.domElement );
+
+      // création du contrôleur de caméra
+      const controls =  new THREE.OrbitControls(camera, renderer.domElement);
+
+      // création de la fonction d'affichage/rotationation
+      function animer() { // appelée à chaque besoin d'affichage-60fps)
+
+	  // modifier la position des objets
+	  update();
+	  // maj de la caméra
+	  controls.update();
+	  // affichage de l'image
+	  renderer.render( scene, camera );
+	  
+	  // demander à rappeler la fonction pour le prochain affichage
+	  requestAnimationFrame( animer );
+
+      }
+
+      function update()
+      {
+        Target.updateAll();
+      }
+
+      function OnDocumentMouseDown(event)
+      {
+        const coords = new THREE.Vector2();
+        coords.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        coords.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(coords, camera);
+
+        const intersects = raycaster.intersectObjects(Target.meshs, true);
+
+        if(intersects.length > 0)
+        {
+          let target = Target.getTargetFromSphere(intersects[0].object);
+          scene.remove(target);
+          Target.targets = Target.targets.filter((t) => t !== target);
+        }
+      }
+
+
+      // ajout des gestionnaires d'évènements
+      document.addEventListener( 'mousedown', OnDocumentMouseDown, false );
+
+      this.addEventListener( 'resize', function(){
+	  camera.aspect = window.innerWidth / window.innerHeight;
+	  camera.updateProjectionMatrix();
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+      }, false);
+
+			     
+      animer();
+
+    </script>
+  </body>
+</html>

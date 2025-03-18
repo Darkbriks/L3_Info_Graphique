@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>TP4 Three.js - Exo 2.1</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  
+  <body>
+    <!-- inclusion de la librairie Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+
+    <!-- inclusion du contrôleur de type orbite -->
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/mesObjets.js"></script>
+    
+    <script>
+      // Création de la caméra
+      const camera = new THREE.PerspectiveCamera(60,
+						 window.innerWidth / window.innerHeight,
+						);
+      camera.position.z = 5;
+
+      // création de la scène
+      const scene = new THREE.Scene();
+      const couleur = new THREE.Color(0xFFFFFF);
+      scene.background = couleur;
+
+      // ---- création des 10 sphères
+      let spheres = [];
+      for (let i = 0; i < 10; i++)
+      {
+        const sphereGeom = new THREE.SphereGeometry( 0.1, 32, 16 );
+        const sphereMat = new THREE.MeshLambertMaterial( { color: 0xffff00 } );
+        const sphere = new THREE.Mesh( sphereGeom, sphereMat );
+        sphere.position.x = Math.random() * 4 - 2;
+        sphere.position.y = Math.random() * 4 - 2;
+        sphere.position.z = Math.random() * 4 - 2;
+
+        spheres.push(sphere);
+        scene.add(sphere);
+      }
+
+      scene.add(createBox())
+
+      const lum = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+      lum.position.set( 1, 1, 2 );
+      lum.castShadow = true;
+      scene.add(lum);
+      
+      // création du renderer
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild( renderer.domElement );
+
+      // création du contrôleur de caméra
+      const controls =  new THREE.OrbitControls(camera, renderer.domElement);
+
+      // création de la fonction d'affichage/rotationation
+      function animer() { // appelée à chaque besoin d'affichage-60fps)
+
+	  // modifier la position des objets
+	  update();
+	  // maj de la caméra
+	  controls.update();
+	  // affichage de l'image
+	  renderer.render( scene, camera );
+	  
+	  // demander à rappeler la fonction pour le prochain affichage
+	  requestAnimationFrame( animer );
+
+      }
+
+      function update(){}
+
+      function OnDocumentMouseDown(event)
+      {
+        console.log("click");
+
+        const coords = new THREE.Vector2();
+        coords.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        coords.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(coords, camera);
+
+        const intersects = raycaster.intersectObjects(spheres, true);
+
+        if(intersects.length > 0)
+        {
+          console.log(intersects[0].object);
+
+          if (intersects[0].object.material.transparent === true)
+          {
+            intersects[0].object.material.transparent = false;
+            intersects[0].object.material.opacity = 1.0;
+          }
+          else
+          {
+            intersects[0].object.material.transparent = true;
+            intersects[0].object.material.opacity = 0.25;
+          }
+        }
+      }
+
+
+      // ajout des gestionnaires d'évènements
+      document.addEventListener( 'mousedown', OnDocumentMouseDown, false );
+
+      this.addEventListener( 'resize', function(){
+	  camera.aspect = window.innerWidth / window.innerHeight;
+	  camera.updateProjectionMatrix();
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+      }, false);
+
+			     
+      animer();
+
+    </script>
+  </body>
+</html>
