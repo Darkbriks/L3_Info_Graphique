@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>TP1 Exercice 7 Three.js</title>
+    <style>
+        body { margin: 0; }
+    </style>
+</head>
+<body>
+<script src="js/mesObjets.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+<script>
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('rgb(0, 100, 200)');
+
+    let geometry = new THREE.BoxGeometry();
+    let material = new THREE.MeshLambertMaterial({ color: 'rgb(0, 200, 0)' });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.rotation = new THREE.Euler(0.6, 0.3, 0);
+    scene.add(cube);
+
+    geometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
+    material = new THREE.MeshLambertMaterial({ color: 'rgb(200, 0, 0)' });
+    const torus = new THREE.Mesh(geometry, material);
+    torus.position.x = 2;
+    scene.add(torus);
+
+    const light = new THREE.DirectionalLight('rgb(255, 255, 255)', 1);
+    light.position.set(2, 2, 2);
+    scene.add(light);
+
+    const plane = carreLambert();
+    plane.position.x = -2;
+    plane.rotation.x = 0.6;
+    scene.add(plane);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    function animer()
+    {
+        requestAnimationFrame(animer);
+        cube.rotateY(0.01);
+        torus.rotateX(0.01);
+        plane.rotateX(0.01);
+        renderer.render(scene, camera);
+    }
+
+    animer();
+</script>
+</body>
+</html>
