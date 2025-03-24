@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TP5 Three.js - Exo 1</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  
+  <body>
+    <!-- inclusion de la librairie Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+    
+    <script src="js/ArcballControls.js"></script>
+
+    <script>
+
+      // création de la scène
+      const scene = new THREE.Scene();
+      const couleur = new THREE.Color(0x0080FF);
+      scene.background = couleur;
+
+      
+      // Création de la caméra
+      const camera =
+	    new THREE.PerspectiveCamera(60,
+					window.innerWidth / window.innerHeight,
+				       );
+      camera.position.z = 5;
+
+
+      // chargeur de textures
+      const loader = new THREE.TextureLoader();
+      let texture;
+      // texture externe initiale
+      texture = loader.load('Images/bb.png');
+
+
+        // Création des objets
+        let geometry = new THREE.PlaneGeometry( 2, 2, 2 );
+        const material = new THREE.MeshBasicMaterial( { map: texture } );
+        const plane = new THREE.Mesh( geometry, material );
+        scene.add( plane );
+
+        geometry = new THREE.SphereGeometry( 1, 32, 32 );
+        texture = loader.load('Images/10.jpg');
+        const material2 = new THREE.MeshBasicMaterial( { map: texture } );
+        const sphere = new THREE.Mesh( geometry, material2 );
+        sphere.position.x = 2.5;
+        scene.add( sphere );
+
+        geometry = new THREE.TorusGeometry( 0.5, 0.2, 16, 100 );
+        texture = loader.load('Images/woodV.jpg');
+        const material3 = new THREE.MeshBasicMaterial( { map: texture } );
+        const torus = new THREE.Mesh( geometry, material3 );
+        torus.position.x = -2;
+        scene.add( torus );
+
+      
+      //a jout d'une source lumineuse
+      const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+      source.position.set( 5, 5, 5 );
+      scene.add(source);
+
+
+      // création du renderer
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
+
+      // ajout d'un contrôleur de caméra
+      var control = new THREE.ArcballControls( camera, renderer.domElement, scene );
+      
+      // création de la fonction d'affichage/animation
+      function animer() { // appelée à chaque besoin d'affichage-60fps)
+
+
+	  control.update();
+	  // affichage de l'image
+	  renderer.render( scene, camera );
+	  
+	  // demander à rappeler la fonction pour le prochain affichage
+	  requestAnimationFrame( animer );
+
+      };
+
+      // ajout des gestionnaires d'évènements
+      this.addEventListener( 'resize', function(){
+	  camera.aspect = window.innerWidth / window.innerHeight;
+	  camera.updateProjectionMatrix();
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+      }, false);
+
+      animer();
+ 
+    </script>
+  </body>
+</html>

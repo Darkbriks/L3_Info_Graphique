@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TP5 Three.js - Exo 5</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  
+  <body>
+    <!-- inclusion de la librairie Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+    
+    <script src="js/mesObjets.js"></script>
+    <script src="js/ArcballControls.js"></script>
+
+    <script>
+
+      class CelestialBody
+      {
+        // radius : km
+        // rotSpeed : Durée d'une rotation en jours, float
+        // rotAngle : Inclinaison de l'axe par rapport à l'écliptique en degrés, float
+        // orbitRadius : Rayon de l'orbite en km
+        // orbitOrigin : Vector3, Centre de l'orbite
+        // orbitAngle : Angle de l'orbite par rapport à l'écliptique en degrés, float
+        // orbitSpeed : Durée d'une révolution en jours, float
+        // parent : CelestialBody, Corps parent
+        constructor(radius, rotSpeed, rotAngle, orbitRadius, orbitOrigin, orbitAngle, orbitSpeed, texture, parent=null)
+        {
+          // Rayon equatorial ; 1 unité = 500 000 km
+          this.radius = radius / 500000;
+
+          this.rotSpeed = rotSpeed / 1000; // 1 unité = 100 jours
+          // Convertir en radians
+          this.rotAngle = rotAngle * Math.PI / 180;
+
+          // Rayon de l'orbite ; 1 unité = 500 000 km
+          this.orbitRadius = orbitRadius / 500000;
+          this.orbitOrigin = orbitOrigin; // Vector3, Centre de l'orbite
+          this.orbitAngle = orbitAngle * Math.PI / 180; // Convertir en radians
+          this.orbitSpeed = orbitSpeed / 1000; // 1 unité = 100 jours
+
+          this.parent = parent;
+
+          this.mesh = new THREE.Mesh(new THREE.SphereGeometry(this.radius, 32, 32), new THREE.MeshPhongMaterial({map: texture}));
+          this.mesh.position.set(this.orbitOrigin.x + this.orbitRadius, this.orbitOrigin.y, this.orbitOrigin.z);
+          this.mesh.rotateX(this.rotAngle);
+        }
+
+        update(dt)
+        {
+          this.mesh.rotateY(this.rotSpeed * dt);
+
+          // Rotation de l'orbite
+          this.orbitAngle += this.orbitSpeed * dt;
+          this.mesh.position.set(this.orbitOrigin.x + this.orbitRadius * Math.cos(this.orbitAngle), this.orbitOrigin.y, this.orbitOrigin.z + this.orbitRadius * Math.sin(this.orbitAngle));
+        }
+      }
+
+      
+      // Création de la caméra
+      const camera =
+	    new THREE.PerspectiveCamera(60,
+					window.innerWidth / window.innerHeight,
+				       );
+      camera.position.z = 5;
+
+      // création de la scène
+      const scene = new THREE.Scene();
+      const couleur = new THREE.Color(0x000000);
+      scene.background = couleur;
+
+        const loader = new THREE.TextureLoader();
+        const SunTexture = loader.load('Images/sun2k.jpg');
+        const EarthTexture = loader.load('Images/earthmap1k.jpg');
+
+        let Sun = new CelestialBody(696342, 27.28, 7.25, 0, new THREE.Vector3(0, 0, 0), 0, 0, SunTexture);
+        let Earth = new CelestialBody(6378, 1, 23.4366907752, 149597887.5, new THREE.Vector3(0, 0, 0), 0, 365.25, EarthTexture);
+        scene.add(Sun.mesh);
+        scene.add(Earth.mesh);
+
+        // Désactiver les ombres pour le soleil
+
+        let cameraTarget = Sun.mesh;
+        let cameraDistance = 5;
+
+
+      //a jout d'une source lumineuse
+      const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+      source.position.set(0, 0, 5);
+      scene.add(source);
+
+
+      // création du renderer
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
+
+      // ajout d'un contrôleur de caméra
+      var control = new THREE.ArcballControls( camera, renderer.domElement, scene );
+
+      let dt = 0;
+      let lastTime = 0;
+      function animer()
+      {
+        let time = new Date().getTime();
+        dt = (time - lastTime) / 1000;
+        lastTime = time;
+
+        Sun.update(dt);
+        Earth.update(dt);
+
+        camera.position.set(cameraTarget.position.x, cameraTarget.position.y, cameraTarget.position.z + cameraDistance);
+
+        control.update();
+        renderer.render( scene, camera );
+        requestAnimationFrame( animer );
+      };
+
+      // ajout des gestionnaires d'évènements
+      this.addEventListener( 'resize', function(){
+	  camera.aspect = window.innerWidth / window.innerHeight;
+	  camera.updateProjectionMatrix();
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+      }, false);
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 's') {
+          control.target = Sun.mesh.position;
+          cameraTarget = Sun.mesh;
+          cameraDistance = 5;
+        }
+        if (e.key === 'e') {
+          control.target = Earth.mesh.position;
+          cameraTarget = Earth.mesh;
+          cameraDistance = 0.2;
+        }
+      })
+
+      animer();
+ 
+    </script>
+  </body>
+</html>
