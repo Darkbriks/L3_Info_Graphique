@@ -31,8 +31,6 @@
 
     // création de la scène
     const scene = new THREE.Scene();
-    const couleur = new THREE.Color(0x000000);
-    scene.background = couleur;
 
     // création du rendu
     const renderer = new THREE.WebGLRenderer();
@@ -41,6 +39,14 @@
 
     // ajout d'un contrôleur de caméra
     let control = new THREE.ArcballControls(camera, renderer.domElement, scene);
+
+    // Ajout d'une skybox
+    const loader = new THREE.TextureLoader();
+    loader.load('Images/2k_stars_milky_way.jpg', function (texture)
+    {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = texture;
+    });
 
     let Sun = new CelestialBody({
       name: 'Sun',
