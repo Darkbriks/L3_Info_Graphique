@@ -83,7 +83,7 @@ class CelestialBody {
         button.onclick = () => { focusCameraOn(this); };
         document.getElementById('focus-buttons').appendChild(button);
 
-        //this.createOrbitHelper();
+        this.createOrbitHelper();
     }
 
     static initAll() { CelestialBody.bodies.forEach(body => { body.init(); }); }
@@ -115,10 +115,13 @@ class CelestialBody {
         // Résolution de l'équation de Kepler (méthode de Newton-Raphson)
         let E = meanAnomaly;
         let delta = 1;
+        let i = 0;
         while (Math.abs(delta) > 1e-6)
         {
             delta = (E - this.eccentricity * Math.sin(E) - meanAnomaly) / (1 - this.eccentricity * Math.cos(E));
             E -= delta;
+            i++;
+            if (i > 4) { console.log('L\'équation de Kepler ne converge pas pour', this.name); break; }
         }
 
         // Calcul de l'anomalie vraie

@@ -24,7 +24,7 @@
 
 <script>
     // Création de la caméra
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000);
     // placer la caméra au dessus du plan de l'écliptique
     camera.position.set(0, 300, 0);
     camera.lookAt(0, 0, 0);
@@ -59,7 +59,7 @@
     }, true)
     Sun.lock = true;
 
-    /*let Mercury = new CelestialBody({
+    let Mercury = new CelestialBody({
       name: 'Mercury',
       radius: 2439.7,
       semiMajorAxis: 57909227,
@@ -73,8 +73,8 @@
       axialTilt: DEG_TO_RAD(0.034),
       selfRotationPeriod: DAY_TO_SEC(58.646),
       textureUrl: 'Images/mercurymap.jpg',
-    })*/
-    /*let Venus = new CelestialBody({
+    })
+    let Venus = new CelestialBody({
       name: 'Venus',
       radius: 6051.8,
       semiMajorAxis: 108209475,
@@ -88,8 +88,8 @@
       axialTilt: DEG_TO_RAD(177.36),
       selfRotationPeriod: DAY_TO_SEC(-243.025),
       textureUrl: 'Images/venusmap.jpg',
-    })*/
-    /*let Earth = new CelestialBody({
+    })
+    let Earth = new CelestialBody({
       name: 'Earth',
       radius: 6378.137,
       semiMajorAxis: 149597887.5,
@@ -103,8 +103,8 @@
       axialTilt: DEG_TO_RAD(23.4366907752),
       selfRotationPeriod: DAY_TO_SEC(0.99726949),
       textureUrl: 'Images/earthmap1k.jpg',
-    })*/
-    /*let Moon = new CelestialBody({
+    })
+    let Moon = new CelestialBody({
       name: 'Moon',
       radius: 1737.1,
       semiMajorAxis: 384400,
@@ -118,8 +118,8 @@
       axialTilt: DEG_TO_RAD(1.5424),
       selfRotationPeriod: DAY_TO_SEC(27.321582),
       textureUrl: 'Images/moonmap1k.jpg',
-    })*/
-    /*let Mars = new CelestialBody({
+    })
+    let Mars = new CelestialBody({
       name: 'Mars',
       radius: 3396.2,
       semiMajorAxis: 227939100,
@@ -133,8 +133,8 @@
       axialTilt: DEG_TO_RAD(25.19),
       selfRotationPeriod: DAY_TO_SEC(1.02595676),
       textureUrl: 'Images/marsmap.jpg',
-    })*/
-    /*let Deimos = new CelestialBody({
+    })
+    let Deimos = new CelestialBody({
       name: 'Deimos',
       radius: 6.2,
       semiMajorAxis: 23459.4,
@@ -148,8 +148,8 @@
       axialTilt: DEG_TO_RAD(0.93),
       selfRotationPeriod: DAY_TO_SEC(1.26244),
       textureUrl: 'Images/deimos.webp',
-    })*/
-    /*let Phobos = new CelestialBody({
+    })
+    let Phobos = new CelestialBody({
       name: 'Phobos',
       radius: 11.1,
       semiMajorAxis: 9376.2,
@@ -163,11 +163,11 @@
       axialTilt: DEG_TO_RAD(1.093),
       selfRotationPeriod: DAY_TO_SEC(0.31891),
       textureUrl: 'Images/phobos.jpg',
-    })*/
+    })
     let Jupiter = new CelestialBody({
       name: 'Jupiter',
       radius: 71492,
-      semiMajorAxis: 778547200/100,
+      semiMajorAxis: 778547200,
       eccentricity: 0.04839266,
       inclination: DEG_TO_RAD(1.30530),
       argumentOfPeriapsis: DEG_TO_RAD(273.867),
@@ -259,7 +259,7 @@
         let time = new Date().getTime();
         dt = (time - lastTime) / 1000;
         lastTime = time;
-        elapsedTime += dt * 1000000;
+        elapsedTime += dt * 100000;
 
         //CelestialBody.updateAllRotation(elapsedTime);
         CelestialBody.updateAllPosition(elapsedTime);
