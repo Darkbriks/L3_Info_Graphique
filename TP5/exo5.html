@@ -12,12 +12,12 @@
 
 <body>
 
-<div id="time-control">
+<div id="time-control" style="position: absolute; top: 0; left: 0; z-index: 1000; display: flex; flex-direction: row; align-items: center;">
     <button id="minus" onclick="minus()">-</button>
     <p id="time">1s = 1s</p>
     <button id="plus" onclick="plus()">+</button>
 </div>
-<div id="focus-buttons"></div>
+<div id="focus-buttons" style="position: absolute; top: 0; right: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center;"></div>
 
 <!-- inclusion de la librairie Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
@@ -56,37 +56,26 @@
         scene.background = texture;
     });
 
-    celestialBodiesData.forEach(data => {
-        new CelestialBody(data);
-    });
+    celestialBodiesData.forEach(data => { new CelestialBody(data[0], data[1], data[2], data[3]); });
     CelestialBody.initAll();
 
     let light = new THREE.PointLight(0xffffff, 1, 0, 2);
     let Sun = CelestialBody.GetBodyByName('Sun');
     Sun.mesh.add(light);
 
-    const earthDiffuseMap = new THREE.TextureLoader().load('Images/Earth/earthmap4k.jpg');
-    const earthBumpMap = new THREE.TextureLoader().load('Images/Earth/earthbump4k.jpg');
-    const earthSpecularMap = new THREE.TextureLoader().load('Images/Earth/earthspec4k.jpg');
+    CelestialBody.GetBodyByName('Saturn').addRing({
+        ringInnerRadius: 66900,
+        ringOuterRadius: 483000,
+        ringDiffuseTextureUrl: 'Images/Saturn/saturnringcolor.jpg',
+        ringTransparencyTextureUrl: 'Images/Saturn/saturnringpattern.gif'
+    })
 
-    let Earth = CelestialBody.GetBodyByName('Earth');
-    Earth.mesh.material = new THREE.MeshPhongMaterial({
-        map: earthDiffuseMap,
-        bumpMap: earthBumpMap,
-        bumpScale: 0.05,
-        specularMap: earthSpecularMap,
-        specular: new THREE.Color('grey'),
-    });
-
-    const earthCloudsMap = new THREE.TextureLoader().load('Images/Earth/earthcloudmap.jpg');
-
-    let EarthClouds = CelestialBody.GetBodyByName('EarthClouds');
-    EarthClouds.mesh.material = new THREE.MeshPhongMaterial({
-        map: earthCloudsMap,
-        transparent: true,
-        opacity: 0.8,
-        alphaMap: earthCloudsMap,
-    });
+    CelestialBody.GetBodyByName('Uranus').addRing({
+        ringInnerRadius: 36750,
+        ringOuterRadius: 103000,
+        ringDiffuseTextureUrl: 'Images/Uranus/uranusringcolour.jpg',
+        ringTransparencyTextureUrl: 'Images/Uranus/uranusringtrans.gif'
+    })
 
     CelestialBody.focusedBody = Sun;
 

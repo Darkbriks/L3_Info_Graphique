@@ -1,2 +1,25 @@
+Mercury : Mercury textures from Planetpixelemporium (http://planetpixelemporium.com/mercury.html)
+
+Venus : Venus textures from Planetpixelemporium (http://planetpixelemporium.com/venus.html)
+
 Earth : Earth textures from Planetpixelemporium (http://planetpixelemporium.com/earth8081.html)
 Earth Clouds : Blue Marble Clouds from NASA Visible Earth (http://visibleearth.nasa.gov)
+Moon : SVS Moon textures from NASA (https://svs.gsfc.nasa.gov/4720/)
+
+Mars : Mars textures from Planetpixelemporium (http://planetpixelemporium.com/mars.html)
+Deimos : Deimos diffuse map from Planet Texture Maps Wiki (https://planet-texture-maps.fandom.com/wiki/Deimos) ; Deimos bump map from Planetpixelemporium (http://planetpixelemporium.com/mars.html)
+Phobos : Phobos diffuse map from Planet Texture Maps Wiki (https://planet-texture-maps.fandom.com/wiki/Phobos) ; Phobos bump map from Planetpixelemporium (http://planetpixelemporium.com/mars.html)
+
+Ceres : Ceres textures from Planet Texture Maps Wiki (https://planet-texture-maps.fandom.com/wiki/Ceres)
+
+Jupiter : Jupiter textures from Planetpixelemporium (http://planetpixelemporium.com/jupiter.html)
+Io, Europa, Ganymede, Callisto : Textures from Planet Maps Wiki (https://planet-texture-maps.fandom.com/wiki/Io)
+
+Saturn : Saturn textures from Planetpixelemporium (http://planetpixelemporium.com/saturn.html)
+Saturn Rings : Saturn Rings textures from Planetpixelemporium (http://planetpixelemporium.com/saturn.html)
+Saturn Satellites : Textures from Planet Maps Wiki (https://planet-texture-maps.fandom.com/wiki/Titan)
+
+Uranus : Uranus textures from Planetpixelemporium (http://planetpixelemporium.com/uranus.html)
+Uranus Rings : Uranus Rings textures from Planetpixelemporium (http://planetpixelemporium.com/uranus.html)
+
+Neptune : Neptune textures from Planetpixelemporium (http://planetpixelemporium.com/neptune.html)
