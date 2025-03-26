@@ -66,10 +66,14 @@ class CelestialBody {
         this.helperNumSegments = helperNumSegments;
 
         // Création du mesh avec une géométrie sphérique
-        const geometry = new THREE.SphereGeometry(this.radius, 24, 24);
+        const geometry = new THREE.SphereGeometry(this.radius, 32, 32);
         let material;
 
-        if (basicMaterial) { material = new THREE.MeshBasicMaterial({map: CelestialBody.textureLoader.load(textureUrl)}); }
+        if (basicMaterial)
+        {
+            if (textureUrl) { material = new THREE.MeshBasicMaterial({map: CelestialBody.textureLoader.load(textureUrl)}); }
+            else { material = new THREE.MeshBasicMaterial({color: 0xffffff}); }
+        }
         else
         {
             if (textureUrl) { material = new THREE.MeshPhongMaterial({map: CelestialBody.textureLoader.load(textureUrl)}); }
@@ -79,12 +83,15 @@ class CelestialBody {
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.name = this.name;
 
+        this.group = new THREE.Group();
+        this.group.add(this.mesh);
+
         CelestialBody.bodies.push(this);
     }
 
     init()
     {
-        scene.add(this.mesh);
+        scene.add(this.group);
         this.mesh.rotateX(this.axialTilt);
 
         // Ajouter un bouton pour focus sur le corps céleste
@@ -104,8 +111,8 @@ class CelestialBody {
      */
     updateRotation(time)
     {
-        this.mesh.rotation.y += time / this.selfRotationPeriod;
-        // TODO: Synchroniser avec le temps réel
+        const angle = (time / this.selfRotationPeriod) * Math.PI * 2;
+        this.mesh.rotation.y = angle;
     }
 
     static updateAllRotation(time) { CelestialBody.bodies.forEach(body => { body.updateRotation(time); }); }
@@ -142,13 +149,13 @@ class CelestialBody {
         // Ajout de la position du parent si existant
         if (this.parent)
         {
-            const parentPosition = this.parent.mesh.position;
+            const parentPosition = this.parent.group.position;
             x += parentPosition.x;
             y += parentPosition.y;
             z += parentPosition.z;
         }
 
-        this.mesh.position.set(x, y, z);
+        this.group.position.set(x, y, z);
     }
 
     static updateAllPosition(time) { CelestialBody.bodies.forEach(body => { body.updatePosition(time); }); }
@@ -164,7 +171,7 @@ class CelestialBody {
         const material = new THREE.LineBasicMaterial({ color: this.helperColor });
         this.orbitHelper = new THREE.Line(geometry, material);
 
-        if (this.parent) { this.parent.mesh.add(this.orbitHelper); }
+        if (this.parent) { this.parent.group.add(this.orbitHelper); }
         else { scene.add(this.orbitHelper); }
         // TODO: Utiliser des groupes pour éviter les problèmes de rotation
         console.log('Orbit helper created for', this.name);
@@ -205,8 +212,8 @@ class CelestialBody {
 
 function focusCameraOn(body)
 {
-    control.target = body.mesh.position;
-    cameraTarget = body.mesh;
+    control.target = body.group.position;
+    cameraTarget = body.group;
     cameraTargetLastPosition = body.position.clone();
 
     camera.position.x = cameraTarget.position.x;
