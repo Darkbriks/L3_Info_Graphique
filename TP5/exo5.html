@@ -12,7 +12,11 @@
 
 <body>
 
-<!-- Ajouter un bouton pour centré la caméra sur chaque planète -->
+<div id="time-control">
+    <button id="minus" onclick="minus()">-</button>
+    <p id="time">1s = 1s</p>
+    <button id="plus" onclick="plus()">+</button>
+</div>
 <div id="focus-buttons"></div>
 
 <!-- inclusion de la librairie Three.js -->
@@ -24,7 +28,9 @@
 <script src="js/ArcballControls.js"></script>
 
 <script>
-    const clock = new THREE.Clock();
+    let timeMultiplier = 1;
+    function minus() { timeMultiplier /= 10; timeMultiplier = Math.max(timeMultiplier, 0.1); document.getElementById("time").innerHTML = "1s = " + timeMultiplier + "s"; }
+    function plus() { timeMultiplier *= 10; timeMultiplier = Math.min(timeMultiplier, 10000000); document.getElementById("time").innerHTML = "1s = " + timeMultiplier + "s"; }
 
     // Création de la caméra
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000000);
@@ -58,26 +64,39 @@
     let light = new THREE.PointLight(0xffffff, 1, 0, 2);
     let Sun = CelestialBody.GetBodyByName('Sun');
     Sun.mesh.add(light);
-    Sun.mesh.castShadow = false;
-    Sun.mesh.receiveShadow = false;
 
-    let cameraTarget = Sun.mesh;
-    let cameraTargetLastPosition = new THREE.Vector3();
+    const earthDiffuseMap = new THREE.TextureLoader().load('Images/Earth/earthmap4k.jpg');
+    const earthBumpMap = new THREE.TextureLoader().load('Images/Earth/earthbump4k.jpg');
+    const earthSpecularMap = new THREE.TextureLoader().load('Images/Earth/earthspec4k.jpg');
 
+    let Earth = CelestialBody.GetBodyByName('Earth');
+    Earth.mesh.material = new THREE.MeshPhongMaterial({
+        map: earthDiffuseMap,
+        bumpMap: earthBumpMap,
+        bumpScale: 0.05,
+        specularMap: earthSpecularMap,
+        specular: new THREE.Color('grey'),
+    });
+
+    const earthCloudsMap = new THREE.TextureLoader().load('Images/Earth/earthcloudmap.jpg');
+
+    let EarthClouds = CelestialBody.GetBodyByName('EarthClouds');
+    EarthClouds.mesh.material = new THREE.MeshPhongMaterial({
+        map: earthCloudsMap,
+        transparent: true,
+        opacity: 0.8,
+        alphaMap: earthCloudsMap,
+    });
+
+    CelestialBody.focusedBody = Sun;
+
+    const clock = new THREE.Clock();
+    let elapsedTime = 0;
     function animer() {
-        let deltaTime = clock.getDelta();
-        let elapsedTime = clock.elapsedTime * 100000;
+        elapsedTime += clock.getDelta() * timeMultiplier;
 
         CelestialBody.updateAllRotation(elapsedTime);
         CelestialBody.updateAllPosition(elapsedTime);
-
-        let dx = cameraTarget.position.x - cameraTargetLastPosition.x;
-        let dy = cameraTarget.position.y - cameraTargetLastPosition.y;
-        let dz = cameraTarget.position.z - cameraTargetLastPosition.z;
-        camera.position.x += dx;
-        camera.position.y += dy;
-        camera.position.z += dz;
-        cameraTargetLastPosition = cameraTarget.position.clone();
 
         control.update();
         renderer.render(scene, camera);

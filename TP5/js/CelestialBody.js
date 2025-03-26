@@ -2,10 +2,12 @@ const KM_BY_UNIT = 149597870.7 / 50000; // 1 Unité = 1 UA / 500 = 149597870.7 k
 
 function DEG_TO_RAD(deg) { return deg * Math.PI / 180; }
 function DAY_TO_SEC(day) { return day * 24 * 3600; }
+function HOUR_TO_SEC(hour) { return hour * 3600; }
 
 class CelestialBody {
     static bodies = [];
     static textureLoader = new THREE.TextureLoader();
+    static focusedBody = null;
 
     /**
      * Crée un corps céleste.
@@ -30,14 +32,16 @@ class CelestialBody {
      */
     constructor({
                     name,
+                    parent = "",
                     radius,
+                    equatorialRadius = radius,
+                    polarRadius = radius,
                     semiMajorAxis,
                     eccentricity,
                     inclination,
                     argumentOfPeriapsis,
                     longitudeOfAscendingNode,
                     orbitalPeriod,
-                    parent = "",
                     axialTilt = 0,
                     selfRotationPeriod,
                     textureUrl,
@@ -49,7 +53,12 @@ class CelestialBody {
                 })
     {
         this.name = name;
+        this.parent = CelestialBody.GetBodyByName(parent);
+
         this.radius = radius / KM_BY_UNIT;
+        this.equatorialRadius = equatorialRadius / KM_BY_UNIT;
+        this.polarRadius = polarRadius / KM_BY_UNIT;
+
         this.semiMajorAxis = semiMajorAxis / KM_BY_UNIT;
         this.eccentricity = eccentricity;
         this.inclination = inclination;
@@ -57,16 +66,33 @@ class CelestialBody {
         this.longitudeOfAscendingNode = 0;//longitudeOfAscendingNode; // FIXME
         this.meanAnomaly = 0;
         this.orbitalPeriod = orbitalPeriod;
-        this.parent = CelestialBody.GetBodyByName(parent);
+
         this.axialTilt = axialTilt;
         this.selfRotationPeriod = selfRotationPeriod;
-        this.lock = lock;
+
         this.useHelper = helper;
         this.helperColor = helperColor;
         this.helperNumSegments = helperNumSegments;
 
+        this.lock = lock;
+
         // Création du mesh avec une géométrie sphérique
-        const geometry = new THREE.SphereGeometry(this.radius, 32, 32);
+        let geometry;
+        if (equatorialRadius !== polarRadius)
+        {
+            const ellipsoid = (u, v, target) => {
+                const theta = u * Math.PI * 2;
+                const phi = v * Math.PI - Math.PI / 2;
+
+                const x = this.equatorialRadius * Math.cos(theta) * Math.cos(phi);
+                const y = this.equatorialRadius * Math.sin(theta) * Math.cos(phi) * (this.polarRadius / this.equatorialRadius);
+                const z = this.polarRadius * Math.sin(phi);
+
+                target.set(x, y, z);
+            };
+            geometry = new THREE.ParametricGeometry(ellipsoid, 32, 32);
+        }
+        else { geometry = new THREE.SphereGeometry(this.radius, 32, 32); }
         let material;
 
         if (basicMaterial)
@@ -85,6 +111,8 @@ class CelestialBody {
 
         this.group = new THREE.Group();
         this.group.add(this.mesh);
+
+        this.position = new THREE.Vector3(0, 0, 0);
 
         CelestialBody.bodies.push(this);
     }
@@ -109,11 +137,7 @@ class CelestialBody {
      * Met à jour la rotation sur lui-même du corps céleste.
      * @param {number} time - Le temps écoulé (en secondes).
      */
-    updateRotation(time)
-    {
-        const angle = (time / this.selfRotationPeriod) * Math.PI * 2;
-        this.mesh.rotation.y = angle;
-    }
+    updateRotation(time) { this.mesh.rotation.y = (time / this.selfRotationPeriod) * Math.PI * 2; }
 
     static updateAllRotation(time) { CelestialBody.bodies.forEach(body => { body.updateRotation(time); }); }
 
@@ -149,16 +173,33 @@ class CelestialBody {
         // Ajout de la position du parent si existant
         if (this.parent)
         {
-            const parentPosition = this.parent.group.position;
+            const parentPosition = this.parent.position;
             x += parentPosition.x;
             y += parentPosition.y;
             z += parentPosition.z;
         }
 
-        this.group.position.set(x, y, z);
+        this.position.set(x, y, z);
     }
 
-    static updateAllPosition(time) { CelestialBody.bodies.forEach(body => { body.updatePosition(time); }); }
+    static updateAllPosition(time)
+    {
+        CelestialBody.bodies.forEach(body => { body.updatePosition(time); });
+        CelestialBody.bodies.forEach(body =>
+        {
+            if (body === CelestialBody.focusedBody)
+            {
+                body.group.position.set(0, 0, 0);
+            }
+            else
+            {
+                body.group.position.set(
+                    body.position.x - CelestialBody.focusedBody.position.x,
+                    body.position.y - CelestialBody.focusedBody.position.y,
+                    body.position.z - CelestialBody.focusedBody.position.z);
+            }
+        })
+    }
 
     createOrbitHelper()
     {
@@ -214,10 +255,7 @@ function focusCameraOn(body)
 {
     control.target = body.group.position;
     cameraTarget = body.group;
-    cameraTargetLastPosition = body.position.clone();
-
-    camera.position.x = cameraTarget.position.x;
-    camera.position.y = cameraTarget.position.y;
-    camera.position.z = cameraTarget.position.z;
     camera.lookAt(cameraTarget.position);
+    CelestialBody.focusedBody = body;
+    console.log('Focused on', body.name);
 }

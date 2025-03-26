@@ -1,0 +1,2 @@
+Earth : Earth textures from Planetpixelemporium (http://planetpixelemporium.com/earth8081.html)
+Earth Clouds : Blue Marble Clouds from NASA Visible Earth (http://visibleearth.nasa.gov)
