@@ -1,4 +1,4 @@
-const KM_BY_UNIT = 149597870.7 / 500; // 1 Unité = 1 UA / 500 = 149597870.7 km / 500
+const KM_BY_UNIT = 149597870.7 / 50000; // 1 Unité = 1 UA / 500 = 149597870.7 km / 500
 
 function DEG_TO_RAD(deg) { return deg * Math.PI / 180; }
 function DAY_TO_SEC(day) { return day * 24 * 3600; }
@@ -18,12 +18,15 @@ class CelestialBody {
      * @param {number} params.argumentOfPeriapsis - L'argument du périapside (en radians).
      * @param {number} params.longitudeOfAscendingNode - La longitude du nœud ascendant (en radians).
      * @param {number} params.orbitalPeriod - La période orbitale (en secondes).
-     * @param {CelestialBody} [params.parent=null] - Le corps parent autour duquel orbite cet objet (facultatif).
-     * @param {string} params.textureUrl - URL de la texture pour le mesh (facultatif).
+     * @param {string} [params.parent=""] - Le corps parent autour duquel orbite cet objet (facultatif).
      * @param {number} params.axialTilt - L'inclinaison de l'axe de rotation (en radians).
      * @param {number} params.selfRotationPeriod - La période de rotation sur lui-même (en secondes).
+     * @param {string} params.textureUrl - URL de la texture pour le mesh (facultatif).
      * @param {boolean} [basicMaterial=false] - Utiliser un matériau de base (facultatif).
      * @param {boolean} [helper=false] - Utiliser un helper pour l'orbite (facultatif).
+     * @param {number} [helperColor=0xffffff] - Couleur du helper (facultatif).
+     * @param {number} [helperNumSegments=500] - Nombre de segments pour le helper (facultatif).
+     * @param {boolean} [lock=false] - Bloquer la position orbitale (facultatif).
      */
     constructor({
                     name,
@@ -34,26 +37,33 @@ class CelestialBody {
                     argumentOfPeriapsis,
                     longitudeOfAscendingNode,
                     orbitalPeriod,
-                    parent = null,
-                    textureUrl,
+                    parent = "",
                     axialTilt = 0,
                     selfRotationPeriod,
-                }, basicMaterial = false, helper = false)
+                    textureUrl,
+                    basicMaterial = false,
+                    helper = false,
+                    helperColor = 0xffffff,
+                    helperNumSegments = 500,
+                    lock = false
+                })
     {
         this.name = name;
         this.radius = radius / KM_BY_UNIT;
         this.semiMajorAxis = semiMajorAxis / KM_BY_UNIT;
         this.eccentricity = eccentricity;
         this.inclination = inclination;
-        this.argumentOfPeriapsis = argumentOfPeriapsis;
-        this.longitudeOfAscendingNode = longitudeOfAscendingNode;
+        this.argumentOfPeriapsis = 0;//argumentOfPeriapsis;  // FIXME
+        this.longitudeOfAscendingNode = 0;//longitudeOfAscendingNode; // FIXME
         this.meanAnomaly = 0;
         this.orbitalPeriod = orbitalPeriod;
-        this.parent = parent;
+        this.parent = CelestialBody.GetBodyByName(parent);
         this.axialTilt = axialTilt;
         this.selfRotationPeriod = selfRotationPeriod;
-        this.lock = false;
+        this.lock = lock;
         this.useHelper = helper;
+        this.helperColor = helperColor;
+        this.helperNumSegments = helperNumSegments;
 
         // Création du mesh avec une géométrie sphérique
         const geometry = new THREE.SphereGeometry(this.radius, 24, 24);
@@ -83,7 +93,7 @@ class CelestialBody {
         button.onclick = () => { focusCameraOn(this); };
         document.getElementById('focus-buttons').appendChild(button);
 
-        this.createOrbitHelper();
+        if (this.useHelper) { this.createOrbitHelper(); }
     }
 
     static initAll() { CelestialBody.bodies.forEach(body => { body.init(); }); }
@@ -146,15 +156,17 @@ class CelestialBody {
     createOrbitHelper()
     {
         const points = [];
-        const segments = 100;
+        const segments = this.helperNumSegments;
 
         for (let i = 0; i <= segments; i++) { points.push(this.thetaToCartesian((i / segments) * Math.PI * 2)); }
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const material = new THREE.LineBasicMaterial({ color: this.helperColor });
         this.orbitHelper = new THREE.Line(geometry, material);
 
-        scene.add(this.orbitHelper);
+        if (this.parent) { this.parent.mesh.add(this.orbitHelper); }
+        else { scene.add(this.orbitHelper); }
+        // TODO: Utiliser des groupes pour éviter les problèmes de rotation
         console.log('Orbit helper created for', this.name);
     }
 
@@ -179,6 +191,15 @@ class CelestialBody {
         const z = xprime * (sinOmegaP * sinI) + yprime * (cosOmegaP * sinI);
 
         return new THREE.Vector3(x, z, y);
+    }
+
+    static GetBodyByName(name)
+    {
+        for (let i = 0; i < CelestialBody.bodies.length; i++)
+        {
+            if (CelestialBody.bodies[i].name === name) { return CelestialBody.bodies[i]; }
+        }
+        return null;
     }
 }
 
