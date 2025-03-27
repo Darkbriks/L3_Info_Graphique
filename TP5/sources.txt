@@ -1,3 +1,5 @@
+Sun : No idea, Present in base project
+
 Mercury : Mercury textures from Planetpixelemporium (http://planetpixelemporium.com/mercury.html)
 
 Venus : Venus textures from Planetpixelemporium (http://planetpixelemporium.com/venus.html)
@@ -23,3 +25,5 @@ Uranus : Uranus textures from Planetpixelemporium (http://planetpixelemporium.co
 Uranus Rings : Uranus Rings textures from Planetpixelemporium (http://planetpixelemporium.com/uranus.html)
 
 Neptune : Neptune textures from Planetpixelemporium (http://planetpixelemporium.com/neptune.html)
+
+All datas about planets are from Wikipedia (https://en.wikipedia.org/wiki/Main_Page)

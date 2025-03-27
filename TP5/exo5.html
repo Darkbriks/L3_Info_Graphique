@@ -99,6 +99,11 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
     }, false);
 
+    document.addEventListener('keydown', function (event) {
+        if (event.key === '+') plus();
+        if (event.key === '-') minus();
+    });
+
     animer();
 
 </script>

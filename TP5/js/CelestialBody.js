@@ -75,7 +75,7 @@ class CelestialBody {
                     opacity = 1,
                     transparent = false,
                     basicMaterial = false,
-                    blinnPhongExponent = 16,
+                    blinnPhongExponent = 32,
                 }, {
                     helper = false,
                     helperColor = 0xffffff,

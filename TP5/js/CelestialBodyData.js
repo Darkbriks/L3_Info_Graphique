@@ -7,11 +7,12 @@ const celestialBodiesData = [
     [
         { name: 'Mercury', radius: 2439.7, parent: 'Sun' },
         {
-            semiMajorAxis: 57909227,
-            eccentricity: 0.20563069,
+            semiMajorAxis: 57909050,
+            eccentricity: 0.205630,
             inclination: DEG_TO_RAD(7.00487),
             argumentOfPeriapsis: DEG_TO_RAD(29.124),
             longitudeOfAscendingNode: DEG_TO_RAD(48.331),
+            meanAnomaly: DEG_TO_RAD(174.796),
             orbitalPeriod: DAY_TO_SEC(87.9691),
             selfRotationPeriod: DAY_TO_SEC(58.646)
         },
@@ -21,12 +22,13 @@ const celestialBodiesData = [
     [
         { name: 'Venus', radius: 6051.8, parent: 'Sun' },
         {
-            semiMajorAxis: 108209475,
+            semiMajorAxis: 108209500,
             eccentricity: 0.00677188,
             inclination: DEG_TO_RAD(3.39471),
             argumentOfPeriapsis: DEG_TO_RAD(54.884),
             longitudeOfAscendingNode: DEG_TO_RAD(76.680),
-            orbitalPeriod: DAY_TO_SEC(224.701),
+            meanAnomaly: DEG_TO_RAD(50.115),
+            orbitalPeriod: DAY_TO_SEC(-243.023),
             selfRotationPeriod: DAY_TO_SEC(-243.025)
         },
         { diffuseTextureUrl: 'Images/Venus/venusmap.jpg', bumpTextureUrl: 'Images/Venus/venusbump.jpg', bumpScale: 0.05 },
@@ -40,6 +42,7 @@ const celestialBodiesData = [
             inclination: 0,
             argumentOfPeriapsis: DEG_TO_RAD(288.064),
             longitudeOfAscendingNode: DEG_TO_RAD(174.873),
+            meanAnomaly: DEG_TO_RAD(357.529),
             orbitalPeriod: DAY_TO_SEC(365.256363),
             axialTilt: DEG_TO_RAD(23.4366907752),
             selfRotationPeriod: DAY_TO_SEC(0.99726949)
@@ -53,16 +56,17 @@ const celestialBodiesData = [
         { helper: true, helperColor: 0x3399ff }
     ],
     [
-        { name: 'EarthClouds', radius: 6428.137, parent: 'Sun' },
+        { name: 'EarthClouds', radius: 6378.137 + 50, parent: 'Sun' },
         {
             semiMajorAxis: 149597887.5,
             eccentricity: 0.01671022,
             inclination: 0,
             argumentOfPeriapsis: DEG_TO_RAD(288.064),
             longitudeOfAscendingNode: DEG_TO_RAD(174.873),
+            meanAnomaly: DEG_TO_RAD(357.529),
             orbitalPeriod: DAY_TO_SEC(365.256363),
             axialTilt: DEG_TO_RAD(23.4366907752),
-            selfRotationPeriod: DAY_TO_SEC(0.5)
+            selfRotationPeriod: DAY_TO_SEC(0.99726949)
         },
         {
             diffuseTextureUrl: 'Images/Earth/earthcloudmap.jpg',
@@ -75,11 +79,12 @@ const celestialBodiesData = [
     [
         { name: 'Moon', radius: 1737.1, parent: 'Earth' },
         {
-            semiMajorAxis: 384400,
+            semiMajorAxis: 384399,
             eccentricity: 0.0549,
             inclination: DEG_TO_RAD(5.145),
             argumentOfPeriapsis: DEG_TO_RAD(125.08),
             longitudeOfAscendingNode: DEG_TO_RAD(318.15),
+            meanAnomaly: DEG_TO_RAD(134.96),
             orbitalPeriod: DAY_TO_SEC(27.321582),
             axialTilt: DEG_TO_RAD(1.5424),
             selfRotationPeriod: DAY_TO_SEC(27.321582)
@@ -91,12 +96,13 @@ const celestialBodiesData = [
         { name: 'Mars', radius: 3396.2, parent: 'Sun' },
         {
             semiMajorAxis: 227939100,
-            eccentricity: 0.09341233,
+            eccentricity: 0.0939,
             inclination: DEG_TO_RAD(1.85061),
             argumentOfPeriapsis: DEG_TO_RAD(286.502),
             longitudeOfAscendingNode: DEG_TO_RAD(49.558),
-            orbitalPeriod: DAY_TO_SEC(686.971),
-            axialTilt: DEG_TO_RAD(25.19),
+            orbitalPeriod: DAY_TO_SEC(686.885),
+            meanAnomaly: DEG_TO_RAD(19.412),
+            axialTilt: DEG_TO_RAD(1.85),
             selfRotationPeriod: DAY_TO_SEC(1.02595676)
         },
         {
@@ -106,7 +112,7 @@ const celestialBodiesData = [
         },
         { helper: true, helperColor: 0xff5500 }
     ],
-    [
+    [// Todo: review the data
         { name: 'Deimos', radius: 6.2, parent: 'Mars' },
         {
             semiMajorAxis: 23459.4,
@@ -139,8 +145,8 @@ const celestialBodiesData = [
     [
         { name: 'Ceres', radius: 469.73, parent: 'Sun' },
         {
-            semiMajorAxis: 413767000,
-            eccentricity: 0.079903,
+            semiMajorAxis: 414103605.888,
+            eccentricity: 0.075705,
             inclination: DEG_TO_RAD(10.587),
             argumentOfPeriapsis: DEG_TO_RAD(72.556),
             longitudeOfAscendingNode: DEG_TO_RAD(80.305),
