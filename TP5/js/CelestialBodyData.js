@@ -66,7 +66,7 @@ const celestialBodiesData = [
             meanAnomaly: DEG_TO_RAD(357.529),
             orbitalPeriod: DAY_TO_SEC(365.256363),
             axialTilt: DEG_TO_RAD(23.4366907752),
-            selfRotationPeriod: DAY_TO_SEC(0.99726949)
+            selfRotationPeriod: DAY_TO_SEC(0.99726949/3)
         },
         {
             diffuseTextureUrl: 'Images/Earth/earthcloudmap.jpg',

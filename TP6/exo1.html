@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TP6 Three.js - Exo 1</title>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  
+  <body>
+    <!-- inclusion de la librairie Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+    
+    <script src="js/ArcballControls.js"></script>
+
+    <script>
+
+      
+      // Création de la caméra
+      const camera =
+	    new THREE.PerspectiveCamera(60,
+					window.innerWidth / window.innerHeight,
+				       );
+      camera.position.z = 5;
+      
+      // création de la scène
+      const scene = new THREE.Scene();
+      const couleur = new THREE.Color(0x0080FF);
+      scene.background = couleur;
+
+      // --- création des deux objets et de leur boite englobante
+
+      // ---> à compléter <---
+   
+      //ajout d'une source lumineuse
+      const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+      source.position.set( 20, 20, 20 );
+      scene.add(source);
+
+      // création du renderer
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
+
+
+      // ajout d'un contrôleur de caméra
+      var control = new THREE.ArcballControls( camera, renderer.domElement, scene );
+      // création de la fonction d'affichage/animation
+      function animer() { // appelée à chaque besoin d'affichage-60fps)
+
+	  // mise à jour de la position du second objet
+
+	  // ---> à compléter <---
+	  
+	  // vérification de l aprésence d'une intersection entre 
+	  // les deux objets (via leur boite englobante respective)
+
+	  // ---> à compléter <---
+
+	  // mise à jour du contrôleur de caméra
+	  control.update();
+	  // affichage de l'image
+	  renderer.render( scene, camera );
+	  
+	  // demander à rappeler la fonction pour le prochain affichage
+	  requestAnimationFrame( animer );
+
+      };
+
+      // ajout des gestionnaires d'évènements
+      this.addEventListener( 'resize', function(){
+	  camera.aspect = window.innerWidth / window.innerHeight;
+	  camera.updateProjectionMatrix();
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+      }, false);
+
+      animer();
+ 
+    </script>
+  </body>
+</html>
