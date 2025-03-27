@@ -1,82 +1,101 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <title>TP6 Three.js - Exo 1</title>
     <style>
-      body { margin: 0; }
+        body {
+            margin: 0;
+        }
     </style>
-  </head>
-  
-  <body>
-    <!-- inclusion de la librairie Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
-    
-    <script src="js/ArcballControls.js"></script>
+</head>
 
-    <script>
+<body>
+<!-- inclusion de la librairie Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
 
-      
-      // Création de la caméra
-      const camera =
-	    new THREE.PerspectiveCamera(60,
-					window.innerWidth / window.innerHeight,
-				       );
-      camera.position.z = 5;
-      
-      // création de la scène
-      const scene = new THREE.Scene();
-      const couleur = new THREE.Color(0x0080FF);
-      scene.background = couleur;
+<script src="js/ArcballControls.js"></script>
 
-      // --- création des deux objets et de leur boite englobante
+<script>
+    // création de la scène
+    const scene = new THREE.Scene();
+    const couleur = new THREE.Color(0x0080FF);
+    scene.background = couleur;
 
-      // ---> à compléter <---
-   
-      //ajout d'une source lumineuse
-      const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
-      source.position.set( 20, 20, 20 );
-      scene.add(source);
+    // Création de la caméra
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight);
+    camera.position.z = 5;
 
-      // création du renderer
-      const renderer = new THREE.WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      document.body.appendChild( renderer.domElement );
+    // création du renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
+    // --- création des deux objets et de leur boite englobante
+    let geometry = new THREE.TorusKnotGeometry(0.5, 0.1, 64, 8);
+    let material = new THREE.MeshPhongMaterial({color: 0xffffff});
+    let torus1 = new THREE.Mesh(geometry, material);
+    torus1.position.x = 0.0;
+    scene.add(torus1);
 
-      // ajout d'un contrôleur de caméra
-      var control = new THREE.ArcballControls( camera, renderer.domElement, scene );
-      // création de la fonction d'affichage/animation
-      function animer() { // appelée à chaque besoin d'affichage-60fps)
+    let box1 = new THREE.Box3().setFromObject(torus1);
+    let box1Helper = new THREE.Box3Helper(box1, 0x00ff00);
+    scene.add(box1Helper);
 
-	  // mise à jour de la position du second objet
+    material = new THREE.MeshPhongMaterial({color: 0xffffff});
+    let torus2 = new THREE.Mesh(geometry, material);
+    torus2.position.x = 2.0;
+    scene.add(torus2);
 
-	  // ---> à compléter <---
-	  
-	  // vérification de l aprésence d'une intersection entre 
-	  // les deux objets (via leur boite englobante respective)
+    let box2 = new THREE.Box3().setFromObject(torus2);
+    let box2Helper = new THREE.Box3Helper(box2, 0x00ff00);
+    scene.add(box2Helper);
 
-	  // ---> à compléter <---
+    let box2Direction = 1;
 
-	  // mise à jour du contrôleur de caméra
-	  control.update();
-	  // affichage de l'image
-	  renderer.render( scene, camera );
-	  
-	  // demander à rappeler la fonction pour le prochain affichage
-	  requestAnimationFrame( animer );
+    //ajout d'une source lumineuse
+    const source = new THREE.PointLight(0xffffff, 1.0, 0, 1);
+    source.position.set(20, 20, 20);
+    scene.add(source);
 
-      };
+    // ajout d'un contrôleur de caméra
+    var control = new THREE.ArcballControls(camera, renderer.domElement, scene);
 
-      // ajout des gestionnaires d'évènements
-      this.addEventListener( 'resize', function(){
-	  camera.aspect = window.innerWidth / window.innerHeight;
-	  camera.updateProjectionMatrix();
-	  renderer.setSize( window.innerWidth, window.innerHeight );
-      }, false);
+    function animer()
+    {
+        // mise à jour de la position du second objet
+        torus2.position.x += 0.01 * box2Direction;
+        box2.setFromObject(torus2);
+        if (torus2.position.x >= 2.0 || torus2.position.x <= -2.0) { box2Direction *= -1; }
 
-      animer();
- 
-    </script>
-  </body>
+        // vérification de l aprésence d'une intersection entre
+        // les deux objets (via leur boite englobante respective)
+        if (box1.intersectsBox(box2))
+        {
+            torus2.material.transparent = true;
+            torus2.material.opacity = 0.5;
+        }
+        else { torus2.material.transparent = false; }
+
+        // mise à jour du contrôleur de caméra
+        control.update();
+        // affichage de l'image
+        renderer.render(scene, camera);
+
+        // demander à rappeler la fonction pour le prochain affichage
+        requestAnimationFrame(animer);
+
+    };
+
+    // ajout des gestionnaires d'évènements
+    this.addEventListener('resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+
+    animer();
+
+</script>
+</body>
 </html>
