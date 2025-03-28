@@ -1,7 +1,7 @@
 function DisplayLevelMenu()
 {
     mainMenu.style.display = "none"
-    levelMenu.style.display = "block"
+    levelMenu.style.display = "flex"
     levelMenu.innerHTML += "<button onclick='SaveEarth()'>SAVE EARTH</button>"
     levelMenu.innerHTML += "<button>SAVE SATURN</button>"
     levelMenu.innerHTML += "<button>SAVE HAUMEA</button>"
@@ -10,8 +10,8 @@ function DisplayLevelMenu()
     camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
+
     // Ajout d'une skybox
-    const loader = new THREE.TextureLoader();
     loader.load('Images/2k_stars_milky_way.jpg', function (texture) {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.background = texture;
@@ -39,18 +39,14 @@ function DisplayLevelMenu()
     })
 
     CelestialBody.focusedBody = Sun;
-    LevelMenuUpdate();
+    CelestialBody.updateAllPosition(0);
     document.body.appendChild(renderer.domElement);
+    currentLevelUpdate = LevelMenuUpdate;
 }
 
 let elapsedTime = 0;
-function LevelMenuUpdate()
+function LevelMenuUpdate(deltaTime)
 {
-    elapsedTime += clock.getDelta() * timeMultiplier;
-
     CelestialBody.updateAllRotation(elapsedTime);
-    CelestialBody.updateAllPosition(elapsedTime);
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(LevelMenuUpdate);
+    //CelestialBody.updateAllPosition(elapsedTime);
 }

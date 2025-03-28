@@ -12,18 +12,16 @@
 <div id="level-menu"></div>
 <div id="hud"></div>
 
-<!-- TODO : remove this -->
-<div id="focus-buttons" style="position: absolute; top: 0; right: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center;"></div>
-
 <!-- inclusion de la librairie Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
 
-<script src="js/mesObjets.js"></script>
+<script src="js/CameraAnimations.js"></script>
 <script src="js/CelestialBody.js"></script>
 <script src="js/CelestialBodyData.js"></script>
-<script src="js/ArcballControls.js"></script>
+<script src="js/Characters.js"></script>
 <script src="js/MainMenu.js"></script>
 <script src="js/LevelMenu.js"></script>
+<script src="js/Levels/SaveEarth.js"></script>
 
 <script>
     // Global variables
@@ -31,27 +29,19 @@
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000000);
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer(); renderer.setSize(window.innerWidth, window.innerHeight);
-    let timeMultiplier = 1;
+    const loader = new THREE.TextureLoader();
+    let player;
+    let timeMultiplier = 0;
     let control
+    let keys = {}; // Object to store key states
+    let currentLevelUpdate = null; // Function to update the current level
 
     const mainMenu = document.getElementById("main-menu");
     const levelMenu = document.getElementById("level-menu");
 
-
     document.addEventListener('DOMContentLoaded', () => {
-        function minus() {
-            timeMultiplier /= 10;
-            timeMultiplier = Math.max(timeMultiplier, 0.1);
-            document.getElementById("time").innerHTML = "1s = " + timeMultiplier + "s";
-        }
-
-        function plus() {
-            timeMultiplier *= 10;
-            timeMultiplier = Math.min(timeMultiplier, 10000000);
-            document.getElementById("time").innerHTML = "1s = " + timeMultiplier + "s";
-        }
-
         DisplayMainMenu();
+        Update();
     });
 
     this.addEventListener('resize', function () {
@@ -59,6 +49,18 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }, false);
+
+    document.addEventListener('keydown', function (event) { keys[event.key] = true; }, false);
+    document.addEventListener('keyup', function (event) { keys[event.key] = false; }, false);
+
+    function Update()
+    {
+        const deltaTime = clock.getDelta();
+        renderer.render(scene, camera);
+
+        if (currentLevelUpdate) { currentLevelUpdate(deltaTime); }
+        requestAnimationFrame(Update);
+    }
 
 </script>
 </body>

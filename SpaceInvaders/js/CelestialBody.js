@@ -236,16 +236,6 @@ class CelestialBody {
     {
         scene.add(this.group);
         this.mesh.rotateX(this.axialTilt);
-
-        // Ajouter un bouton pour focus sur le corps céleste
-        if (this.createFocusButton)
-        {
-            const button = document.createElement('button');
-            button.textContent = this.name;
-            button.onclick = () => { focusCameraOn(this); };
-            document.getElementById('focus-buttons').appendChild(button);
-        }
-
         if (this.useHelper) { this.createOrbitHelper(); }
     }
 
@@ -332,8 +322,6 @@ class CelestialBody {
 
         if (this.parent) { this.parent.group.add(this.orbitHelper); }
         else { scene.add(this.orbitHelper); }
-        // TODO: Utiliser des groupes pour éviter les problèmes de rotation
-        console.log('Orbit helper created for', this.name);
     }
 
     thetaToCartesian(theta)
