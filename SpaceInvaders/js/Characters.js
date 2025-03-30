@@ -8,7 +8,7 @@ class GameObject
         this.latitude = latitude;
         this.longitude = longitude;
 
-        const geometry = new THREE.SphereGeometry(size / KM_BY_UNIT, 32, 32);
+        const geometry = new THREE.SphereGeometry(size / KM_BY_UNIT, 8, 8);
         const material = new THREE.MeshBasicMaterial({ color: color });
 
         this.mesh = new THREE.Mesh(geometry, material);
@@ -249,7 +249,7 @@ class Projectile extends GameObject
         for (let i = 0; i < Enemy.enemies.length; i++)
         {
             const enemy = Enemy.enemies[i];
-            if (this.spawnByPlayer && this.group.position.distanceTo(enemy.group.position) < this.mesh.geometry.parameters.radius*1.5 + enemy.mesh.geometry.parameters.radius)
+            if (this.spawnByPlayer && this.group.position.distanceTo(enemy.group.position) < this.mesh.geometry.parameters.radius*2 + enemy.mesh.geometry.parameters.radius)
             {
                 this.lifeTime = 0;
                 enemy.life--;

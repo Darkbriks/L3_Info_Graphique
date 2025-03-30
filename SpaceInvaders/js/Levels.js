@@ -12,6 +12,8 @@ function LoadLevel(bodyName, enemiesCreationFunction, music = null)
     levelMenu.style.display = "none";
     deathMenu.style.display = "none";
     winMenu.style.display = "none";
+    hudLife.innerHTML = "";
+    hudScore.innerHTML = "";
     hud.style.display = "flex";
     killEnemies = 0;
 
@@ -21,7 +23,7 @@ function LoadLevel(bodyName, enemiesCreationFunction, music = null)
             levelSound.setBuffer(buffer);
             levelSound.setLoop(true);
             levelSound.setVolume(1);
-            crossfade(menuSound, levelSound, 5, EasingFunctions.easeOutCubic);
+            crossfade(menuSound, levelSound, 3, EasingFunctions.easeOutCubic);
         });
     }
 

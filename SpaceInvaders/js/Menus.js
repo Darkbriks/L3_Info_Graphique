@@ -59,7 +59,7 @@ function DisplayDeathMenu()
     camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
-    crossfade(levelSound, menuSound, 5, EasingFunctions.easeOutCubic);
+    crossfade(levelSound, menuSound, 3, EasingFunctions.easeOutCubic);
 }
 
 function DisplayWinMenu()
@@ -78,5 +78,5 @@ function DisplayWinMenu()
     camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
-    crossfade(levelSound, menuSound, 5, EasingFunctions.easeOutCubic);
+    crossfade(levelSound, menuSound, 3, EasingFunctions.easeOutCubic);
 }
