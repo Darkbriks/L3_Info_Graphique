@@ -4,6 +4,7 @@ function DEG_TO_RAD(deg) { return deg * Math.PI / 180; }
 function DAY_TO_SEC(day) { return day * 24 * 3600; }
 function HOUR_TO_SEC(hour) { return hour * 3600; }
 
+// Todo : Simplifier
 class CelestialBody {
     static bodies = [];
     static textureLoader = new THREE.TextureLoader();
@@ -50,7 +51,7 @@ class CelestialBody {
     constructor({
                     name,
                     parent = "",
-                    radius,
+                    radius= 0,
                     equatorialRadius = radius,
                     polarRadius = radius,
                 }, {
@@ -86,7 +87,7 @@ class CelestialBody {
     {
         this.name = name;
         this.parent = CelestialBody.GetBodyByName(parent);
-        this.radius = radius / KM_BY_UNIT;
+        this.radius = radius === 0 ? equatorialRadius / KM_BY_UNIT : radius / KM_BY_UNIT;
         this.equatorialRadius = equatorialRadius / KM_BY_UNIT;
         this.polarRadius = polarRadius / KM_BY_UNIT;
 
@@ -355,13 +356,4 @@ class CelestialBody {
         }
         return null;
     }
-}
-
-function focusCameraOn(body)
-{
-    control.target = body.group.position;
-    cameraTarget = body.group;
-    camera.lookAt(cameraTarget.position);
-    CelestialBody.focusedBody = body;
-    console.log('Focused on', body.name);
 }

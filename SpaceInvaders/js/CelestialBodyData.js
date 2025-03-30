@@ -112,51 +112,6 @@ const celestialBodiesData = [
         },
         { helper: true, helperColor: 0xff5500 }
     ],
-    [// Todo: review the data
-        { name: 'Deimos', radius: 6.2, parent: 'Mars' },
-        {
-            semiMajorAxis: 23459.4,
-            eccentricity: 0.00033,
-            inclination: DEG_TO_RAD(1.788),
-            argumentOfPeriapsis: DEG_TO_RAD(24.525),
-            longitudeOfAscendingNode: DEG_TO_RAD(151.46),
-            orbitalPeriod: DAY_TO_SEC(1.26244),
-            axialTilt: DEG_TO_RAD(0.93),
-            selfRotationPeriod: DAY_TO_SEC(1.26244)
-        },
-        { diffuseTextureUrl: 'Images/Deimos/deimos.webp', bumpTextureUrl: 'Images/Deimos/deimosbump.jpg', bumpScale: 0.005 },
-        { helper: true, helperColor: 0xaa2200 }
-    ],
-    [
-        { name: 'Phobos', radius: 11.1, parent: 'Mars' },
-        {
-            semiMajorAxis: 9376.2,
-            eccentricity: 0.0151,
-            inclination: DEG_TO_RAD(1.093),
-            argumentOfPeriapsis: DEG_TO_RAD(150.057),
-            longitudeOfAscendingNode: DEG_TO_RAD(207.82),
-            orbitalPeriod: DAY_TO_SEC(0.31891),
-            axialTilt: DEG_TO_RAD(1.093),
-            selfRotationPeriod: DAY_TO_SEC(0.31891)
-        },
-        { diffuseTextureUrl: 'Images/Phobos/phobos.jpg', bumpTextureUrl: 'Images/Phobos/phobosbump.jpg', bumpScale: 0.01 },
-        { helper: true, helperColor: 0xaa2200 }
-    ],
-    [
-        { name: 'Ceres', radius: 469.73, parent: 'Sun' },
-        {
-            semiMajorAxis: 414103605.888,
-            eccentricity: 0.075705,
-            inclination: DEG_TO_RAD(10.587),
-            argumentOfPeriapsis: DEG_TO_RAD(72.556),
-            longitudeOfAscendingNode: DEG_TO_RAD(80.305),
-            orbitalPeriod: DAY_TO_SEC(1683.14570801),
-            axialTilt: DEG_TO_RAD(4.0),
-            selfRotationPeriod: DAY_TO_SEC(0.3781)
-        },
-        { diffuseTextureUrl: 'Images/Ceres/Ceres.webp', bumpTextureUrl: 'Images/Ceres/Ceres_bump.webp', bumpScale: 0.025 },
-        { helper: true, helperColor: 0x996633 }
-    ],
     [
         { name: 'Jupiter', radius: 71492, parent: 'Sun' },
         {
@@ -171,66 +126,6 @@ const celestialBodiesData = [
         },
         { diffuseTextureUrl: 'Images/Jupiter/jupiter2_4k.jpg' },
         { helper: true, helperColor: 0xff8800 }
-    ],
-    [
-        { name: 'Io', radius: 1821.6, parent: 'Jupiter' },
-        {
-            semiMajorAxis: 421700,
-            eccentricity: 0.0041,
-            inclination: DEG_TO_RAD(0.05),
-            argumentOfPeriapsis: DEG_TO_RAD(84.129),
-            longitudeOfAscendingNode: DEG_TO_RAD(43.977),
-            orbitalPeriod: DAY_TO_SEC(1.769),
-            axialTilt: DEG_TO_RAD(0.05),
-            selfRotationPeriod: DAY_TO_SEC(1.769)
-        },
-        { diffuseTextureUrl: 'Images/Jupiter/Moons/io.webp' },
-        { helper: true, helperColor: 0xffcc33 }
-    ],
-    [
-        { name: 'Europa', radius: 1560.8, parent: 'Jupiter' },
-        {
-            semiMajorAxis: 671034,
-            eccentricity: 0.0094,
-            inclination: DEG_TO_RAD(0.471),
-            argumentOfPeriapsis: DEG_TO_RAD(219.106),
-            longitudeOfAscendingNode: DEG_TO_RAD(219.106),
-            orbitalPeriod: DAY_TO_SEC(3.551),
-            axialTilt: DEG_TO_RAD(0.471),
-            selfRotationPeriod: DAY_TO_SEC(3.551)
-        },
-        { diffuseTextureUrl: 'Images/Jupiter/Moons/europa.webp' },
-        { helper: true, helperColor: 0x99ccff }
-    ],
-    [
-        { name: 'Ganymede', radius: 2634.1, parent: 'Jupiter' },
-        {
-            semiMajorAxis: 1070412,
-            eccentricity: 0.0013,
-            inclination: DEG_TO_RAD(0.195),
-            argumentOfPeriapsis: DEG_TO_RAD(63.552),
-            longitudeOfAscendingNode: DEG_TO_RAD(63.552),
-            orbitalPeriod: DAY_TO_SEC(7.154),
-            axialTilt: DEG_TO_RAD(0.195),
-            selfRotationPeriod: DAY_TO_SEC(7.154)
-        },
-        { diffuseTextureUrl: 'Images/Jupiter/Moons/ganymede.webp' },
-        { helper: true, helperColor: 0xbbbbbb }
-    ],
-    [
-        { name: 'Callisto', radius: 2410.3, parent: 'Jupiter' },
-        {
-            semiMajorAxis: 1882709,
-            eccentricity: 0.0074,
-            inclination: DEG_TO_RAD(0.192),
-            argumentOfPeriapsis: DEG_TO_RAD(298.848),
-            longitudeOfAscendingNode: DEG_TO_RAD(298.848),
-            orbitalPeriod: DAY_TO_SEC(16.689),
-            axialTilt: DEG_TO_RAD(0.192),
-            selfRotationPeriod: DAY_TO_SEC(16.689)
-        },
-        { diffuseTextureUrl: 'Images/Jupiter/Moons/callisto.webp' },
-        { helper: true, helperColor: 0x888888 }
     ],
     [
         { name: 'Saturn', /*equatorialRadius: 60268, polarRadius: 54364*/ radius: 60268, parent: 'Sun' },

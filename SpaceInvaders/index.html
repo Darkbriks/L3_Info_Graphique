@@ -10,39 +10,68 @@
 
 <div id="main-menu"></div>
 <div id="level-menu"></div>
-<div id="hud"></div>
+<div id="death-menu"></div>
+<div id="win-menu"></div>
+<div id="hud">
+    <div id="life"></div>
+    <div id="score"></div>
+</div>
 
 <!-- inclusion de la librairie Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
-
 <script src="js/CameraAnimations.js"></script>
 <script src="js/CelestialBody.js"></script>
 <script src="js/CelestialBodyData.js"></script>
 <script src="js/Characters.js"></script>
-<script src="js/MainMenu.js"></script>
-<script src="js/LevelMenu.js"></script>
-<script src="js/Levels/SaveEarth.js"></script>
+<script src="js/Menus.js"></script>
+<script src="js/Levels.js"></script>
 
 <script>
+    /*
+    TODO:
+    - Tutorial
+    - CSS
+    - Polish des animations
+    - Désactiver les lignes d'orbites pendant les niveaux
+    */
+
     // Global variables
     const clock = new THREE.Clock();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000000);
+    const listener = new THREE.AudioListener(); camera.add(listener);
+    const menuSound = new THREE.Audio(listener);
+    const levelSound = new THREE.Audio(listener);
+    const audioLoader = new THREE.AudioLoader();
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer(); renderer.setSize(window.innerWidth, window.innerHeight);
     const loader = new THREE.TextureLoader();
     let player;
-    let timeMultiplier = 0;
+    let elapsedTime = 0;
+    let timeMultiplier = 1;
     let control
     let keys = {}; // Object to store key states
     let currentLevelUpdate = null; // Function to update the current level
+    let rendererAdded = false;
+    let currentLevel = null;
+    let nbEnemiesToKill = 0;
+    let killEnemies = 0;
 
     const mainMenu = document.getElementById("main-menu");
     const levelMenu = document.getElementById("level-menu");
+    const deathMenu = document.getElementById("death-menu");
+    const winMenu = document.getElementById("win-menu");
+    const hud = document.getElementById("hud");
+    const hudLife = document.getElementById("life");
+    const hudScore = document.getElementById("score");
 
     document.addEventListener('DOMContentLoaded', () => {
         DisplayMainMenu();
+        LoadSolarSystem();
         Update();
     });
+
+    window.addEventListener("gamepadconnected", (event) => { console.log("Manette connectée :", event.gamepad.id); });
+    window.addEventListener("gamepaddisconnected", (event) => { console.log("Manette déconnectée :", event.gamepad.id); });
 
     this.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -56,12 +85,76 @@
     function Update()
     {
         const deltaTime = clock.getDelta();
+        elapsedTime += deltaTime * timeMultiplier;
         renderer.render(scene, camera);
+
+        CelestialBody.updateAllRotation(elapsedTime);
 
         if (currentLevelUpdate) { currentLevelUpdate(deltaTime); }
         requestAnimationFrame(Update);
     }
 
+    function ClearScene()
+    {
+        player.dispose();
+        for (let i = 0; i < Projectile.projectiles.length; i++) { Projectile.projectiles[i].dispose(); }
+        for (let i = 0; i < Enemy.enemies.length; i++) { Enemy.enemies[i].dispose(); }
+        for (let i = 0; i < PowerUp.powerUps.length; i++) { PowerUp.powerUps[i].dispose(); }
+        Projectile.projectiles = [];
+        Projectile.enemiesProjectiles = [];
+        Enemy.enemies = [];
+        PowerUp.powerUps = [];
+    }
+
+    function LoadSolarSystem()
+    {
+        loader.load('Images/2k_stars_milky_way.jpg', function (texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.background = texture;
+        });
+
+        celestialBodiesData.forEach(data => { new CelestialBody(data[0], data[1], data[2], data[3]); });
+        CelestialBody.initAll();
+
+        let light = new THREE.PointLight(0xffffff, 1, 0, 2);
+        let Sun = CelestialBody.GetBodyByName('Sun');
+        Sun.mesh.add(light);
+
+        CelestialBody.GetBodyByName('Saturn').addRing({
+            ringInnerRadius: 66900,
+            ringOuterRadius: 483000,
+            ringDiffuseTextureUrl: 'Images/Saturn/saturnringcolor.jpg',
+            ringTransparencyTextureUrl: 'Images/Saturn/saturnringpattern.gif'
+        })
+
+        CelestialBody.GetBodyByName('Uranus').addRing({
+            ringInnerRadius: 36750,
+            ringOuterRadius: 103000,
+            ringDiffuseTextureUrl: 'Images/Uranus/uranusringcolour.jpg',
+            ringTransparencyTextureUrl: 'Images/Uranus/uranusringtrans.gif'
+        })
+
+        CelestialBody.focusedBody = Sun;
+        CelestialBody.updateAllPosition(0);
+    }
+
+    function crossfade(soundOut, soundIn, duration = 3, easingFunction = (t) => t)
+    {
+        let startTime = performance.now();
+        function fade()
+        {
+            let elapsed = (performance.now() - startTime) / 1000;
+            let progress = Math.min(elapsed / duration, 1);
+
+            soundOut.setVolume(1 - easingFunction(progress));
+            soundIn.setVolume(easingFunction(progress));
+
+            if (progress < 1) { requestAnimationFrame(fade); } else { soundOut.stop(); }
+        }
+
+        soundIn.play();
+        fade();
+    }
 </script>
 </body>
 </html>

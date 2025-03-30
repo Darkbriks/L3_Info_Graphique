@@ -21,3 +21,50 @@ body { margin: 0; }
     display: flex;
     flex-direction: column;
 }
+
+#death-menu
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#win-menu
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#hud
+{
+    position: absolute;
+    top: 0;
+    left: 5%;
+    width: 90%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+#hud #score
+{
+    font-size: 20px;
+}
+
+#hud #life
+{
+    font-size: 20px;
+}

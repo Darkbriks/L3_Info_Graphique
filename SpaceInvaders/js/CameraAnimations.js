@@ -1,10 +1,3 @@
-function CosInterpolation(a, b, t)
-{
-    const ft = t * Math.PI;
-    const f = (1 - Math.cos(ft)) / 2;
-    return a + (b - a) * f;
-}
-
 function Lerp(a, b, t) { return a + (b - a) * t; }
 
 class AnimationKey
