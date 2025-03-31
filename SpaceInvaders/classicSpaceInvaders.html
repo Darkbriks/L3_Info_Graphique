@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Space Invaders</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<div id="back-to-main-page" style="position: absolute; top: 0; left: 0; z-index: 1000; display: flex; flex-direction: row; align-items: center;">
+    <button id="back-button" onclick="window.location.href='index.html'">Back to Main Page</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    let player;
+    const playerSpeed = 0.2;
+    const bullets = [];
+    let playerBullet = null; // Le joueur peut tirer un seul projectile à la fois
+    let enemyRows = [];
+    let currentRowIndex = 0;
+    let rowDelayActive = false;
+    const keys = {};
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 10;
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    function createPlayer()
+    {
+        const geometry = new THREE.BoxGeometry(1, 0.5, 0.5);
+        const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+        player = new THREE.Mesh(geometry, material);
+        player.position.set(0, -6.5, 0);
+        scene.add(player);
+    }
+
+    class EnemyRow
+    {
+        constructor(enemies)
+        {
+            this.enemies = enemies;
+            this.active = false;
+            this.direction = 1;
+            this.step = 200;
+            this.edgeReached = false;
+        }
+
+        update()
+        {
+            if (!this.active) { return ; }
+            const moveAmount = 0.005;
+            this.step += 1;
+
+            this.enemies.forEach(enemy => { enemy.position.x += moveAmount * this.direction; });
+
+            if (this.edgeReached)
+            {
+                this.direction *= -1;
+                this.enemies.forEach(enemy => { enemy.position.y -= 0.25; });
+                this.active = false;
+                this.step = 0;
+                this.edgeReached = false;
+            }
+
+            if (this.step > 400) { this.edgeReached = true; }
+        }
+    }
+
+    function createInvaders()
+    {
+        const rows = 5;
+        const cols = 8;
+        const spacing = 1.5;
+        const tempRows = [];
+        for (let i = 0; i < rows; i++)
+        {
+            tempRows[i] = [];
+            for (let j = 0; j < cols; j++)
+            {
+                const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+                const material = new THREE.MeshBasicMaterial({color: 0xff0000});
+                const enemy = new THREE.Mesh(geometry, material);
+                enemy.position.set((j - (cols/2 - 0.5)) * spacing, i * spacing, 0);
+                tempRows[i].push(enemy);
+                scene.add(enemy);
+            }
+        }
+        enemyRows = tempRows.map(row => new EnemyRow(row));
+    }
+
+    function shootBullet(parent)
+    {
+        const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const material = new THREE.MeshBasicMaterial({color: 0xffffff});
+        const bullet = new THREE.Mesh(geometry, material);
+        bullet.position.set(parent.position.x, parent.position.y, parent.position.z);
+        scene.add(bullet);
+        return bullet;
+    }
+
+    function checkCollisions()
+    {
+        enemyRows.forEach(row =>
+        {
+            for (let i = row.enemies.length - 1; i >= 0; i--)
+            {
+                if (playerBullet && row.enemies[i].position.distanceTo(playerBullet.position) < 0.5)
+                {
+                    scene.remove(playerBullet);
+                    scene.remove(row.enemies[i]);
+                    row.enemies.splice(i, 1);
+                    playerBullet = null;
+                }
+            }
+        });
+    }
+
+    function updateBullets()
+    {
+        for (let i = bullets.length - 1; i >= 0; i--) { bullets[i].position.y -= 0.2; if (bullets[i].position.y < -7) { scene.remove(bullets[i]); bullets.splice(i, 1); } }
+        if (playerBullet !== null) { playerBullet.position.y += 0.2; if (playerBullet.position.y > 6) { scene.remove(playerBullet); playerBullet = null; } }
+    }
+
+    function animate()
+    {
+        requestAnimationFrame(animate);
+
+        if (keys['ArrowLeft'] || keys['q']) { player.position.x -= playerSpeed; }
+        if (keys['ArrowRight'] || keys['d']) { player.position.x += playerSpeed; }
+        if (keys[' '] && playerBullet === null) { playerBullet = shootBullet(player); }
+        player.position.x = Math.max(Math.min(player.position.x, 7), -7);
+
+        updateBullets();
+        checkCollisions();
+
+        let currentRow = enemyRows[currentRowIndex];
+        if (!currentRow.active && !rowDelayActive) { currentRow.active = true; }
+        currentRow.update();
+
+        if (!rowDelayActive) { rowDelayActive = true;  setTimeout(() => { currentRowIndex++; currentRowIndex = currentRowIndex % enemyRows.length; rowDelayActive = false; }, 250); }
+
+        renderer.render(scene, camera);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        createPlayer();
+        createInvaders();
+        animate();
+    });
+
+    this.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    document.addEventListener('keydown', (event) => { keys[event.key] = true; });
+    document.addEventListener('keyup', (event) => { keys[event.key] = false; });
+</script>
+</body>
+</html>
